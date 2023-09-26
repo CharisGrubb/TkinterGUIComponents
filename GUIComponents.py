@@ -17,8 +17,13 @@ class AutoCompleteField():
         for row in self.menuOptions:
             self.suggestionListBox.insert("end", row)
 
+        #Initialize Fields
+        self.selectedOption = None
+        self.lb_col = 0
+        self.lb_row = 0
+        self.sticky = "NWSE"
 
-        self.selectedOption = None 
+
         #Bind events for seamless functionality
         self.textField.bind("<FocusIn>", self.showPopUpMenu)
         self.textField.bind("<KeyPress>", self.filterOptions)
@@ -29,20 +34,25 @@ class AutoCompleteField():
 
     
     def showPopUpMenu(self,event):
-        pass
+        self.suggestionListBox.grid(column = self.lb_col, row = self.lb_row, sticky = self.sticky)
 
+    #make the suggestion box dissappear
     def hidePopUpMenu(self, event):
-        pass
+        self.suggestionListBox.grid_forget()
 
     def filterOptions(self, event):
 
         pass
 
-    
-    def grid(selfm col=0, row=0, sticky='NWSE'):
-        pass
+
+    #grid layout option
+    def grid(self, col=0, row=0, sticky='NWSE'):
+        self.textField.grid(column=col, row=row, sticky = sticky)
+        self.lb_col = col+1 #used for when suggestions list box is added, to keep it to the right of the text field
+        self.lb_row = row
+        self.sticky = sticky
 
     def selectOption(self, selectOption=None):
         pass
 
-    
+
