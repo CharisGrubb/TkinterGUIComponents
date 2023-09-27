@@ -56,3 +56,42 @@ class AutoCompleteField():
         pass
 
 
+
+class Table():
+    """"
+    This class is to imitate a table object. This uses Labels, Frames, and canvas to imitate a scrolling table/list that supports images and icons. 
+    """
+    """
+    @param: rows:dict {"text": "string display option"
+                        , "icon": PILImageObject
+                        , "icon Path": "path option that can be send in instead of image object"
+                        , "tooltip": "string option for tool tip"}
+    """
+    
+    def __init__(self, rows:dict):
+        pass
+
+    def loadTable(self):
+        pass
+
+    def selectOption(self):
+        pass
+
+    def keyPressHandler(self):
+        pass
+
+    def clickHandler(self):
+        pass
+
+    def pack(self):
+        pass
+
+    def place(self):
+        pass
+
+
+    def grid(self):
+        pass 
+
+    def update(self):
+        pass
