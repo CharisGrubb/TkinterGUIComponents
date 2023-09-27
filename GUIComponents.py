@@ -32,7 +32,7 @@ class AutoCompleteField():
         self.suggestionListBox.bind("<<ListboxSelection>>", self.selectedOption)
 
 
-    
+    #Make the suggestion box appear
     def showPopUpMenu(self,event):
         self.suggestionListBox.grid(column = self.lb_col, row = self.lb_row, sticky = self.sticky)
 
@@ -40,9 +40,18 @@ class AutoCompleteField():
     def hidePopUpMenu(self, event):
         self.suggestionListBox.grid_forget()
 
+    #filter the options to display based on what was typed
     def filterOptions(self, event):
+        filterText = self.textField.get("1.0","end-1c").strip() #Remove white space
+        self.suggestionListBox.delete(0,"end") #remove all and repopulate any that match filter text.
 
-        pass
+        for row in self.menuOptions:
+            if filterText.lower() in str(row).lower(): #Ignore case
+                self.suggestionListBox.insert("end",row)
+
+        self.suggestionListBox.update_idletasks()
+        self.textField.focus_set() #Set focus back to text field where user was typing.
+        
 
 
     #grid layout option
