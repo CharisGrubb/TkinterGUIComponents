@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 """
 This class definition is to take existing tkinter objects and fuse them together to imitate an autocomplete field for reusability
@@ -91,7 +92,7 @@ class Table():
         else:
             self.config = self.__defaultConfig
 
-        self.style = tk.ttk.Style()
+        self.style = ttk.Style()
         self.style.theme_use('clam')
         self.style.configure("Vertical.TScrollbar",gripcount=0
                              , background = self.config['Scrollbar Background']
@@ -104,8 +105,8 @@ class Table():
         self.frame = tk.Frame(self.table)
         self.table.create_window((0,0),window = self.frame, anchor='nw')
 
-        self.scrollBarVertical = tk.ttk.Scrollbar(self.master, orient = 'vertical', command = self.scheduledTests.yview, style = 'Vertical.TScrollbar')
-        self.scrollBarHorizontal = tk.ttk.Scrollbar(self.master, orient = 'vertical', command = self.scheduledTests.yview, style = 'Horizontal.TScrollbar')
+        self.scrollBarVertical = tk.ttk.Scrollbar(self.master, orient = 'vertical', command = self.table.yview, style = 'Vertical.TScrollbar')
+        self.scrollBarHorizontal = tk.ttk.Scrollbar(self.master, orient = 'vertical', command = self.table.yview, style = 'Horizontal.TScrollbar')
 
         self.table.config(yscrollcommand=self.scrollBarVertical.set, xscrollcommand= self.scrollBarHorizontal)
         self.loadTable()
@@ -116,11 +117,11 @@ class Table():
         
         for row in self.rows:
             for column in row:
-                self.rows[row][column]['Label Object'] = tk.Label(master = self.frame
-                                                                  , text = self.rows[row][column]['text'])
+                column['Label Object'] = tk.Label(master = self.frame
+                                                    , text =  column['text'])
                 
-                self.rows[row][column]['Label Object'].bind('<Button-1>', self.clickHandler)
-                self.rows[row][column]['Label Object'].bind('<Button-3>', self.self.rightClickHandler)
+                column['Label Object'].bind('<Button-1>', self.clickHandler)
+                column['Label Object'].bind('<Button-3>', self.rightClickHandler)
 
 
     def selectOption(self):
