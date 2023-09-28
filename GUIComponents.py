@@ -71,17 +71,57 @@ class Table():
     This class is to imitate a table object. This uses Labels, Frames, and canvas to imitate a scrolling table/list that supports images and icons. 
     """
     """
-    @param: rows:dict {"text": "string display option"
+    @param: rows:list of list of dictionaries [[{"text": "string display option"
                         , "icon": PILImageObject
                         , "icon Path": "path option that can be send in instead of image object"
-                        , "tooltip": "string option for tool tip"}
+                        , "tooltip": "string option for tool tip"}]] -A list of rows containint a list of columns, each cell is a dictionary with it's attributes
+    @param: config: dict {"Scrollbar Background": "White"}
     """
-    
-    def __init__(self, rows:dict):
-        pass
+    __defaultConfig = {"Scrollbar Background":"White", "Scrollbar darkcolor" : "gray11"
 
+    }
+    def __init__(self, master, rows:list[list[dict]], config:dict=None):
+        self.master = master
+        self.rows = rows
+        if config is not None:
+            self.config = config
+            for row in self.__defaultConfig.keys():
+                if row not in self.config.keys():
+                    self.config[row] = self.__defaultConfig[row]
+        else:
+            self.config = self.__defaultConfig
+
+        self.style = tk.ttk.Style()
+        self.style.theme_use('clam')
+        self.style.configure("Vertical.TScrollbar",gripcount=0
+                             , background = self.config['Scrollbar Background']
+                             , darkcolor = self.config['Scrollbar darkcolor'])
+        self.style.configure("Horizontal.TScrollbar",gripcount=0
+                             , background = self.config['Scrollbar Background']
+                             , darkcolor = self.config['Scrollbar darkcolor'])
+
+        self.table = tk.Canvas(self.master, confine=True)
+        self.frame = tk.Frame(self.table)
+        self.table.create_window((0,0),window = self.frame, anchor='nw')
+
+        self.scrollBarVertical = tk.ttk.Scrollbar(self.master, orient = 'vertical', command = self.scheduledTests.yview, style = 'Vertical.TScrollbar')
+        self.scrollBarHorizontal = tk.ttk.Scrollbar(self.master, orient = 'vertical', command = self.scheduledTests.yview, style = 'Horizontal.TScrollbar')
+
+        self.table.config(yscrollcommand=self.scrollBarVertical.set, xscrollcommand= self.scrollBarHorizontal)
+        self.loadTable()
+        self.master.bind('KeyPress>', self.keyPressHandler)
+
+        
     def loadTable(self):
-        pass
+        
+        for row in self.rows:
+            for column in row:
+                self.rows[row][column]['Label Object'] = tk.Label(master = self.frame
+                                                                  , text = self.rows[row][column]['text'])
+                
+                self.rows[row][column]['Label Object'].bind('<Button-1>', self.clickHandler)
+                self.rows[row][column]['Label Object'].bind('<Button-3>', self.self.rightClickHandler)
+
 
     def selectOption(self):
         pass
@@ -90,6 +130,9 @@ class Table():
         pass
 
     def clickHandler(self):
+        pass
+    
+    def rightClickHandler(self):
         pass
 
     def pack(self):
@@ -103,4 +146,7 @@ class Table():
         pass 
 
     def update(self):
-        pass
+        self.table.update()
+        self.frame.update()
+        self.scrollBarHorizontal.update()
+        self.scrollBarVertical.update()
