@@ -79,7 +79,7 @@ class Table():
     @param: config: dict {"Scrollbar Background": "White"}
     """
     __defaultConfig = {"Scrollbar Background":"White", "Scrollbar darkcolor" : "gray11"
-
+                        ,"Foreground":"Black", "Background":"White"
     }
     def __init__(self, master, rows:list[list[dict]], config:dict=None):
         self.master = master
@@ -110,9 +110,14 @@ class Table():
 
         self.table.config(yscrollcommand=self.scrollBarVertical.set, xscrollcommand= self.scrollBarHorizontal)
         self.loadTable()
-        self.master.bind('KeyPress>', self.keyPressHandler)
+        self.master.bind('<KeyPress>', self.keyPressHandler)
 
-        
+    def setRightClickMenu(self, menu:tk.Menu):
+        self.right_click_menu = menu
+        for row in self.rows:
+            for column in row:#bind each cell to right click
+                column['Label Object'].bind('<Button-3>', self.rightClickHandler)
+
     def loadTable(self):
         
         for row in self.rows:
@@ -121,7 +126,7 @@ class Table():
                                                     , text =  column['text'])
                 
                 column['Label Object'].bind('<Button-1>', self.clickHandler)
-                column['Label Object'].bind('<Button-3>', self.rightClickHandler)
+                
 
 
     def selectOption(self):
@@ -133,11 +138,19 @@ class Table():
     def clickHandler(self):
         pass
     
-    def rightClickHandler(self):
-        pass
+    def rightClickHandler(self,event):
+        try:
+            self.right_click_menu.tk_popup(event.x_root, event.y_root)
+        except:
+            import traceback
+            print(traceback.format_exc())
+
+        finally:
+            self.right_click_menu.grab_release()
 
     def pack(self):
-        pass
+        self.table.pack()
+        
 
     def place(self):
         pass
@@ -151,3 +164,6 @@ class Table():
         self.frame.update()
         self.scrollBarHorizontal.update()
         self.scrollBarVertical.update()
+
+    def _on_mousewheel(self,event):
+        self.table.yview_scroll(int(-1*(event.delta/120)),"units")
