@@ -71,19 +71,27 @@ class Table():
     """"
     This class is to imitate a table object. This uses Labels, Frames, and canvas to imitate a scrolling table/list that supports images and icons. 
     """
-    """
-    @param: rows:list of list of dictionaries [[{"text": "string display option"
-                        , "icon": PILImageObject
-                        , "icon Path": "path option that can be send in instead of image object"
-                        , "tooltip": "string option for tool tip"}]] -A list of rows containint a list of columns, each cell is a dictionary with it's attributes
-    @param: config: dict {"Scrollbar Background": "White"}
-    """
+    
     __defaultConfig = {"Scrollbar Background":"White", "Scrollbar darkcolor" : "gray11"
-                        ,"Foreground":"Black", "Background":"White"
+                        ,"Foreground":"Black", "Background":"White","Highlight Background":"maroon", "Highlight Foreground":"limegreen"
+                        ,"Font" :"Arial", "Font Size": 14  
     }
     def __init__(self, master, rows:list[list[dict]], config:dict=None):
+        """
+            @param: rows:list of list of dictionaries [[{"text": "string display option"
+                                , "icon": PILImageObject
+                                , "icon Path": "path option that can be send in instead of image object"
+                                , "tooltip": "string option for tool tip"}]] -A list of rows containint a list of columns, each cell is a dictionary with it's attributes
+            @param: config: dict {"Scrollbar Background": "White"}
+        """
+        
         self.master = master
         self.rows = rows
+        self.manager = None
+        self.selectedOption=None
+        self.selectedRow = -1
+        self.selectedColumn = -1
+
         if config is not None:
             self.config = config
             for row in self.__defaultConfig.keys():
@@ -123,24 +131,49 @@ class Table():
         for row in self.rows:
             for column in row:
                 column['Label Object'] = tk.Label(master = self.frame
-                                                    , text =  column['text'])
+                                                , bg = self.config['Background']
+                                                , fg = self.config['Foreground']
+                                                , text =  column['text'])
                 
                 column['Label Object'].bind('<Button-1>', self.clickHandler)
+                column['Label Object'].grid(row=self.rows.index(row),column=row.index(column), sticky='NWSE')
                 
 
 
-    def selectOption(self):
-        pass
+    def selectOption(self,cell:tk.Label):
+        
+        if self.selectedColumn !=-1 and self.selectedRow !=-1:
+            #set old cell back
+            prevCell = self.rows[self.selectedRow][self.selectedColumn]['Label Object']
+            prevCell.config(bg = self.config['Background'], fg= self.config['Foreground'])
+
+        self.selectedOption=cell
+        self.selectedRow = -1
+        self.selectedColumn = -1
+        for row in self.rows:
+            for col in row:
+                if col['Label Object'] == self.selectedOption:
+                  
+                    self.selectedRow = self.rows.index(row)
+                    self.selectedColumn = row.index(col)
+                    cell.config(bg = self.config['Highlight Background'], fg= self.config['Highlight Foreground'])
+                    break#Once found, break out 
+        self.table.update_idletasks()
 
     def keyPressHandler(self):
         pass
 
-    def clickHandler(self):
-        pass
+    def clickHandler(self,event):
+        
+        self.selectOption(cell=event.widget)
+
     
     def rightClickHandler(self,event):
+
         try:
-            self.right_click_menu.tk_popup(event.x_root, event.y_root)
+            if self.right_click_menu is not None:
+                self.selectOption(event.widget)
+                self.right_click_menu.tk_popup(event.x_root, event.y_root)
         except:
             import traceback
             print(traceback.format_exc())
@@ -149,15 +182,19 @@ class Table():
             self.right_click_menu.grab_release()
 
     def pack(self):
+        self.manager = 'pack'
         self.table.pack()
         
 
     def place(self):
-        pass
+        self.manager = 'place'
+        self.table.place()
 
 
-    def grid(self):
-        pass 
+    def grid(self, row=0, column=0, sticky = 'NWSE'):
+        self.manager='grid'
+        self.table.grid(row=row, column=column, sticky = sticky)
+         
 
     def update(self):
         self.table.update()
