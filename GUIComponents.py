@@ -164,7 +164,6 @@ class Table():
         pass
 
     def clickHandler(self,event):
-        
         self.selectOption(cell=event.widget)
 
     
@@ -194,6 +193,8 @@ class Table():
     def grid(self, row=0, column=0, sticky = 'NWSE'):
         self.manager='grid'
         self.table.grid(row=row, column=column, sticky = sticky)
+        self.scrollBarVertical.grid(row=row, column=column+1, sticky=sticky)
+        self.scrollBarHorizontal.grid(row=row+1, column = column, sticky=sticky)
          
 
     def update(self):
