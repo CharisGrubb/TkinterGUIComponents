@@ -162,8 +162,35 @@ class Table():
                     break#Once found, break out 
         self.table.update_idletasks()
 
-    def keyPressHandler(self):
-        pass
+    def keyPressHandler(self, event):
+       
+        if event.keycode == 40:#DOWN
+            #If the table has cells and nothing is currently selected, start with the cell at (0,0)
+            if self.selectedRow == -1 and len(self.rows) and len(self.rows[0]):
+                self.selectOption(self.rows[0][0]['Label Object'])
+            elif self.selectedRow+1<len(self.rows):
+                self.selectOption(self.rows[self.selectedRow+1][self.selectedColumn]['Label Object'])
+
+        elif event.keycode == 39:#RIGHT
+             #If the table has cells and nothing is currently selected, start with the cell at (0,0)
+            if self.selectedRow == -1 and len(self.rows) and len(self.rows[0]):
+                self.selectOption(self.rows[0][0]['Label Object'])
+            elif self.selectedColumn+1 < len(self.rows[self.selectedRow]):
+                self.selectOption(self.rows[self.selectedRow][self.selectedColumn+1]['Label Object'])
+
+        elif event.keycode == 38:#UP
+             #If the table has cells and nothing is currently selected, start with the cell at the bottom
+            if self.selectedRow == -1 and len(self.rows) and len(self.rows[0]):
+                self.selectOption(self.rows[-1][0]['Label Object'])
+            elif self.selectedRow-1>=0:
+                self.selectOption(self.rows[self.selectedRow-1][self.selectedColumn]['Label Object'])
+
+        elif event.keycode == 37:#LEFT
+             #If the table has cells and nothing is currently selected, start with the cell on the first row to the very right
+            if self.selectedRow == -1 and len(self.rows) and len(self.rows[0]):
+                self.selectOption(self.rows[0][-1]['Label Object'])
+            elif self.selectedColumn-1>=0:
+                self.selectOption(self.rows[self.selectedRow][self.selectedColumn-1]['Label Object'])
 
     def clickHandler(self,event):
         self.selectOption(cell=event.widget)
