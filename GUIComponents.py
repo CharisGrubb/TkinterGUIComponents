@@ -74,7 +74,7 @@ class Table():
     
     __defaultConfig = {"Scrollbar Background":"White", "Scrollbar darkcolor" : "gray11"
                         ,"Foreground":"Black", "Background":"White","Highlight Background":"maroon", "Highlight Foreground":"limegreen"
-                        ,"Font" :"Arial", "Font Size": 14  
+                        ,"Font" :"Arial", "Font Size": 14 , "Border Color":"black", "Border Thickness":1
     }
     def __init__(self, master, rows:list[list[dict]], config:dict=None):
         """
@@ -133,7 +133,9 @@ class Table():
                 column['Label Object'] = tk.Label(master = self.frame
                                                 , bg = self.config['Background']
                                                 , fg = self.config['Foreground']
-                                                , text =  column['text'])
+                                                , text =  column['text']
+                                                , bd=self.config['Border Thickness']
+                                                , relief = 'solid')
                 
                 column['Label Object'].bind('<Button-1>', self.clickHandler)
                 column['Label Object'].grid(row=self.rows.index(row),column=row.index(column), sticky='NWSE')
@@ -168,10 +170,9 @@ class Table():
 
     
     def rightClickHandler(self,event):
-
         try:
-            if self.right_click_menu is not None:
-                self.selectOption(event.widget)
+            if self.right_click_menu is not None: #If there is a right click menu, display. 
+                self.selectOption(event.widget) #Selected option is the label the right click was performed on
                 self.right_click_menu.tk_popup(event.x_root, event.y_root)
         except:
             import traceback
@@ -191,6 +192,11 @@ class Table():
 
 
     def grid(self, row=0, column=0, sticky = 'NWSE'):
+        if self.manager == 'pack':
+            print('Forget pack')
+        elif self.manager == 'place':
+            print('Forget place')
+
         self.manager='grid'
         self.table.grid(row=row, column=column, sticky = sticky)
         self.scrollBarVertical.grid(row=row, column=column+1, sticky=sticky)
