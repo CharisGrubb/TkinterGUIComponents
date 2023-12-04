@@ -7,8 +7,11 @@ This class definition is to take existing tkinter objects and fuse them together
 
 class AutoCompleteField():
 
-
-    def __init__(self, master, suggestedOptions:list, **kwargs):
+    __defaultConfig = {"Scrollbar Background":"White", "Scrollbar darkcolor" : "gray11"
+                        ,"Foreground":"Black", "Background":"White","Highlight Background":"maroon", "Highlight Foreground":"limegreen"
+                        ,"Font" :"Arial", "Font Size": 14 , "Border Color":"black", "Border Thickness":1
+    }
+    def __init__(self, master, suggestedOptions:list, config=None):
         self.master = master
         self.textField = tk.Text(master = self.master, wrap = "none", height = 1)
         self.suggestionListBox = tk.Listbox(master = self.master) #This is the menu box popup that shows suggestions based on what was typed
@@ -210,7 +213,9 @@ class Table():
 
     def pack(self):
         self.manager = 'pack'
-        self.table.pack()
+        self.table.pack(fill = 'both', expand = True)
+        self.scrollBarHorizontal(fill = 'x', anchor = 's')
+        self.scrollBarVertical(fill='y', anchor = 'e', side = 'right')
         
 
     def place(self):
